@@ -31,6 +31,7 @@ $this->EventArguments['Type'] = 'Discussion';
             <span class="AuthorInfo">
                <?php
                echo WrapIf(htmlspecialchars(GetValue('Title', $Author)), 'span', array('class' => 'MItem AuthorTitle'));
+               echo WrapIf(htmlspecialchars(GetValue('Location', $Author)), 'span', array('class' => 'MItem AuthorLocation'));
                $this->FireEvent('AuthorInfo'); 
                ?>
             </span>
@@ -42,6 +43,10 @@ $this->EventArguments['Type'] = 'Discussion';
                ?>
             </span>
             <?php
+            // Include source if one was set
+            if ($Source = GetValue('Source', $Discussion))
+               echo ' '.Wrap(sprintf(T('via %s'), T($Source.' Source', $Source)), 'span', array('class' => 'MItem MItem-Source')).' ';
+            
             // Category
             if (C('Vanilla.Categories.Use')) {
                echo ' <span class="MItem Category">';
@@ -62,11 +67,11 @@ $this->EventArguments['Type'] = 'Discussion';
                   echo FormatBody($Discussion);
                ?>
             </div>
+            <?php 
+            $this->FireEvent('AfterDiscussionBody');
+            WriteReactions($Discussion);
+            ?>
          </div>
       </div>
-      <?php 
-      $this->FireEvent('AfterDiscussionBody');
-      WriteReactions($Discussion);
-      ?>
    </div>
 </div>

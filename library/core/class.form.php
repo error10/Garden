@@ -215,7 +215,7 @@ class Gdn_Form extends Gdn_Pluggable {
     *   ------------------------------------------------------------------------
     *   Value         The ID of the category that    FALSE
     *                 is selected.
-    *   IncludeNull   Include a blank row?           FALSE
+    *   IncludeNull   Include a blank row?           TRUE
     *   CategoryData  Custom set of categories to    CategoryModel::Categories()
     *                 display.
     *
@@ -267,7 +267,7 @@ class Gdn_Form extends Gdn_Pluggable {
       // Start with null option?
       $IncludeNull = GetValue('IncludeNull', $Options) || !$HasValue;
       if ($IncludeNull === TRUE)
-         $Return .= '<option value=""></option>';
+         $Return .= '<option value="">'.T('Select a category...').'</option>';
          
       // Show root categories as headings (ie. you can't post in them)?
       $DoHeadings = C('Vanilla.Categories.DoHeadings');
@@ -659,6 +659,7 @@ class Gdn_Form extends Gdn_Pluggable {
     * @return string
     */
    public function Date($FieldName, $Attributes = FALSE) {
+      $Return = '';
       $YearRange = ArrayValueI('yearrange', $Attributes, FALSE);
       $StartYear = 0;
       $EndYear = 0;
@@ -712,7 +713,7 @@ class Gdn_Form extends Gdn_Pluggable {
                   $Attributes['class'] = trim($CssClass . ' Month');
                   if ($SubmittedTimestamp)
                      $Attributes['Value'] = date('n', $SubmittedTimestamp);
-                  $Return = $this->DropDown($FieldName . '_Month', $Months, $Attributes);
+                  $Return .= $this->DropDown($FieldName . '_Month', $Months, $Attributes);
                   break;
                case 'day':
                   // Day select
@@ -1585,6 +1586,8 @@ class Gdn_Form extends Gdn_Pluggable {
          $this->_FormValues = $NewValue;
          return;
       }
+      
+      $MagicQuotes = get_magic_quotes_gpc();
 
       if (!is_array($this->_FormValues)) {
          $TableName = $this->InputPrefix;
@@ -1601,6 +1604,16 @@ class Gdn_Form extends Gdn_Pluggable {
             $FieldName = substr($Field, $TableNameLength);
             $FieldName = $this->_UnescapeString($FieldName);
             if (substr($Field, 0, $TableNameLength) == $TableName) {
+               if ($MagicQuotes) {
+                  if (is_array($Value)) {
+                     foreach ($Value as $i => $v) {
+                        $Value[$i] = stripcslashes($v);
+                     }
+                  } else {
+                     $Value = stripcslashes($Value);
+                  }
+               }
+               
                $this->_FormValues[$FieldName] = $Value;
             }
          }

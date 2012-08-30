@@ -1039,7 +1039,7 @@ function _FormatStringCallback($Match, $SetArgs = FALSE) {
             $Result = urlencode($Value);
             break;
          case 'gender':
-            // Format in the form of FieldName,gender,male,female,unknown
+            // Format in the form of FieldName,gender,male,female,unknown[,plural]
             
             if (is_array($Value) && count($Value) == 1)
                $Value = array_shift($Value);
@@ -1050,6 +1050,8 @@ function _FormatStringCallback($Match, $SetArgs = FALSE) {
                $User = Gdn::UserModel()->GetID($Value);
                if ($User)
                   $Gender = $User->Gender;
+            } else {
+               $Gender = 'p';
             }
             
             switch($Gender) {
@@ -1059,6 +1061,9 @@ function _FormatStringCallback($Match, $SetArgs = FALSE) {
                case 'f':
                   $Result = $FormatArgs;
                   break;
+               case 'p':
+                  $Result = GetValue(5, $Parts, GetValue(4, $Parts));
+               case 'u':
                default:
                   $Result = GetValue(4, $Parts);
             }
@@ -2169,7 +2174,11 @@ if (!function_exists('ProxyRequest')) {
        * - pop the first (only) element off it... 
        * - return that.
        */
-      $ResponseHeaders['StatusCode'] = array_pop(array_slice(explode(' ',trim($Status)),1,1));
+      $Status = trim($Status);
+      $Status = explode(' ',$Status);
+      $Status = array_slice($Status,1,1);
+      $Status = array_pop($Status);
+      $ResponseHeaders['StatusCode'] = $Status;
       foreach ($ResponseHeaderLines as $Line) {
          $Line = explode(':',trim($Line));
          $Key = trim(array_shift($Line));
@@ -2754,5 +2763,72 @@ if (!function_exists('Url')) {
    function Url($Path = '', $WithDomain = FALSE, $RemoveSyndication = FALSE) {
       $Result = Gdn::Request()->Url($Path, $WithDomain);
       return $Result;
+   }
+}
+
+
+if (!function_exists('ViewLocation')) {
+   /**
+    * Get the path of a view.
+    * 
+    * @param string $View The name of the view.
+    * @param string $Controller The name of the controller invoking the view or blank.
+    * @param string $Folder The application folder or plugins/plugin folder.
+    * @return string|false The path to the view or false if it wasn't found.
+    */
+   function ViewLocation($View, $Controller, $Folder) {
+      $Paths = array();
+      
+      if (strpos($View, '/') !== FALSE) {
+         // This is a path to the view from the root.
+         $Paths[] = $View;
+      } else {
+         $View = strtolower($View);
+         $Controller = strtolower(StringEndsWith($Controller, 'Controller', TRUE, TRUE));
+         if ($Controller) {
+            $Controller = '/'.$Controller;
+         }
+
+         $Extensions = array('tpl', 'php');
+         
+         // 1. First we check the theme.
+         if ($Theme = Gdn::Controller()->Theme) {
+            foreach ($Extensions as $Ext) {
+               $Paths[] = PATH_THEMES."/{$Theme}/views{$Controller}/$View.$Ext";
+            }
+         }
+
+         // 2. Then we check the application/plugin.
+         if (StringBeginsWith($Folder, 'plugins/')) {
+            // This is a plugin view.
+            foreach ($Extensions as $Ext) {
+               $Paths[] = PATH_ROOT."/{$Folder}/views{$Controller}/$View.$Ext";
+            }
+         } else {
+            // This is an application view.
+            $Folder = strtolower($Folder);
+            foreach ($Extensions as $Ext) {
+               $Paths[] = PATH_APPLICATIONS."/{$Folder}/views{$Controller}/$View.$Ext";
+            }
+
+            if ($Folder != 'dashboard' && StringEndsWith($View, '.master')) {
+               // This is a master view that can always fall back to the dashboard.
+               foreach ($Extensions as $Ext) {
+               $Paths[] = PATH_APPLICATIONS."/dashboard/views{$Controller}/$View.$Ext";
+            }
+            }
+         }
+      }
+      
+      // Now let's search the paths for the view.
+      foreach ($Paths as $Path) {
+         if (file_exists($Path))
+            return $Path;
+      }
+      
+      Trace($View, 'View');
+      Trace($Paths, 'ViewLocation()');
+      
+      return FALSE;
    }
 }

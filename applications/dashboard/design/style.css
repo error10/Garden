@@ -64,7 +64,7 @@ body.Vanilla.Post #Panel {
 }
 body.Conversations.add #Content,
 body.Vanilla.Post #Content {
-   width: 100%;
+   width: auto;
    margin: 0;
 }
 body.Entry #Content {
@@ -149,8 +149,13 @@ a {
    text-decoration: none;
    color: #1e79a7;
 }
-a:hover {
+a:hover,
+a.TextColor:hover,
+a:hover .TextColor {
    color: #ff0084;
+}
+a.TextColor, a .TextColor {
+   color: black;
 }
 img.Thumbnail {
 	max-height: 300px;
@@ -248,6 +253,24 @@ select {
    color: #111;
    border-color: #666;
 }
+.NavLabel {
+   font-weight: bold;
+   margin-right: 4px;
+}
+.NavBar > .Button {
+   border-radius: 0;
+   -moz-border-radius: 0;
+   -webkit-border-radius: 0;
+   border-right-width: 0;
+}
+.NavBar > .Button:first-child {
+   border-radius: 2px 0 0 2px;
+}
+.NavBar > .Button:last-child {
+   border-radius: 0 2px 2px 0;
+   border-right-width: 1px;
+}
+.Button.Active,
 .ButtonGroup.Open .Button.Handle,
 .Button:focus,
 .Button:active {
@@ -256,6 +279,23 @@ select {
    box-shadow: none;
    -moz-box-shadow: none;
    -webkit-box-shadow: none;
+}
+.Button.FileInput > input {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 0;
+  border: solid transparent;
+  border-width: 0 0 100px 200px;
+  opacity: 0;
+  filter: alpha(opacity=0);
+  -moz-transform: translate(-300px, 0) scale(4);
+  direction: ltr;
+  cursor: pointer;
+}
+.Button.FileInput {
+   position: relative;
+   overflow: hidden;
 }
 .BigButton {
    display: block;
@@ -548,39 +588,25 @@ a.Small img {
 .DismissMessage a.Dismiss {
 	font-family: arial;
    position: absolute;
-	font-size: 22px;
+	font-size:16px;
 	font-weight: bold;
    line-height: 1;
-   color: #999;
-	top: 3px;
-	right: 5px;
-}
-.DismissMessage a.Dismiss,
-.DismissMessage a.Dismiss:hover {
-   border-radius: 0;
-   -moz-border-radius: 0;
-   -webkit-border-radius: 0;
    color: #777;
-   display: block;
-   height:14px;
-   margin:0;
-   padding:1px 3px 2px 4px;
-   width:auto;
-   font-family:arial;
-   font-size:16px;
-   font-weight:bold;
-   right: -1px;
-   top: -1px;
-}
-.DismissMessage strong,
-.DismissMessage b {
-	font-weight: bold;
+	top: -1px;
+	right: -1px;
+   padding:1px 3px;
+   text-decoration: none;
 }
 .DismissMessage a.Dismiss:hover {
-   text-decoration: none;
    border: none;
    background: #333;
    color: #fff;
+}
+
+
+.DismissMessage strong,
+.DismissMessage b {
+	font-weight: bold;
 }
 .DismissMessage {
 	font-size: 13px;
@@ -749,7 +775,6 @@ div.Discussion:hover .OptionsTitle:hover,
 .Item:hover .OptionsTitle, .Item.Open .OptionsTitle {
    visibility: visible;
 }
-
 .Flyout:before,
 .Flyout:after {
    border-bottom: 7px solid #444444;
@@ -1616,6 +1641,24 @@ img.LeftAlign {
    margin: 0 10px 5px 0;
    max-width: 300px;
 }
+
+.Message dt {
+    font-weight: bold;
+    margin: 10px 0 4px;
+}
+
+.Message dd {
+    margin-left: 30px;
+}
+
+.Message dd > p {
+    margin-top: 4px;
+}
+
+.Message li {
+    margin: 5px 0;
+}
+
 .ClearFix {
    clear: both;
 }
@@ -1775,6 +1818,7 @@ table.PreferenceGroup th,
 }
 
 /* About in content area */
+.ContentColumn .About h2 { display: none; }
 dl.About dt,
 dl.About dd {
    padding: 0;
@@ -1910,10 +1954,6 @@ form.Thumbnail .Warning {
 /* =================================================================== Popups */
 .Popup .Info {
 	margin-top: 10px;
-}
-.Popup .Loading {
-   display: block;
-	width: 200px;
 }
 .Overlay {
   position: absolute;
@@ -2272,6 +2312,7 @@ tr.CategoryHeading td {
 
 .SpWarn {
    background-position: -96px -84px;
+   background-image: url('images/sprites.png') !important;
    width: 18px;
 }
 
@@ -2371,7 +2412,7 @@ textarea.MultiComplete {
 }
 .ac_results {
    padding: 0;
-   border: 1px solid #bbb;
+   border: 1px solid #d7d8da;
    border-top: 0;
    background-color: white;
    overflow: hidden;
@@ -2401,7 +2442,7 @@ textarea.MultiComplete {
    */
    line-height: 16px;
    overflow: hidden;
-   border-bottom: 1px solid #bbb;
+   border-bottom: 1px solid #d7d8da;
    text-align: left;
 }
 .ac_lastitem {
@@ -2409,14 +2450,14 @@ textarea.MultiComplete {
 }
 .ac_results strong {
    font-weight: bold;
-   background: #daf4fd;
+   background: #c7e2ff;
 }
 .ac_over strong {
    font-weight: bold;
-   background: #2ab0de;
+   background: #216ebf;
 }
 .ac_over {
-   background: #44c7f4;
+   background: #004D9F;
    color: #fff;
 }
 .AddPeople h4 {
@@ -3344,6 +3385,7 @@ body.embed .InformMessages {
 .InProgress .ReactSprite {
    background-image: none !important;
 }
+.ReactEverything { background-position: -197px -53px; }
 .ReactAwesome { background-position: -269px -6px; }
 .ReactFlag { background-position: -54px -52px; }
 .ReactInsightful { background-position: -149px -6px; }
@@ -3374,8 +3416,32 @@ body.embed .InformMessages {
 .UserReactionWrap .ReactSprite {
    background-image: url('http://cdn.vanillaforums.com/images/sprites-14-000-bordered.png');
 }
-
 .ActionBlock {
     margin: 15px 0 5px;
     font-style: italic;
+}
+
+/* Embedded Video Preview Hide/Reveal */
+.Video.YouTube .VideoPlayer {
+    display: none;
+}
+.Video.YouTube .VideoPreview {
+    cursor: pointer;
+    position: relative;
+    display: inline-block;
+}
+.Video.YouTube .VideoPreview:after {
+    background: url('http://cdn.vanillaforums.com/images/youtube-overlay-button.png') 0 -44px no-repeat transparent;
+    position: absolute;
+    display: block;
+    content: '';
+    top: 50%;
+    left: 50%;
+    margin-left: -30px;
+    margin-top: -22px;
+    height: 44px;
+    width: 60px;
+}
+.Video.YouTube .VideoPreview:hover:after {
+    background-position: 0 0;
 }

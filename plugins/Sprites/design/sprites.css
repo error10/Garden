@@ -81,6 +81,7 @@
 }
 
 */
+.SpIgnoreList,
 .SpWhosOnline,
 .SpDelete,
 .SpBan,
@@ -113,13 +114,13 @@
 .SpMyDiscussions,
 .SpDiscussions,
 .SpComments {
-    display: inline-block;
-    height: 14px;
-    width: 14px;
-    background: url('http://cdn.vanillaforums.com/images/sprites-14-000.png') 0 0 no-repeat transparent;
-    background-position: 14px 14px;
-    vertical-align: top;
-    margin: 4px 4px 0 0;
+   display: inline-block;
+   min-height: 14px;
+   min-width: 14px;
+   background: url('http://cdn.vanillaforums.com/images/sprites-14-000.png') 0 0 no-repeat transparent;
+   background-position: 14px 14px;
+   vertical-align: top;
+   margin: 4px 4px 0 0;
 }
 .MenuItems .Sprite,
 .NavButton > .Sprite {
@@ -135,7 +136,7 @@
    margin: 0;
 }
 .SpActivity,
-.SpPublicActivities { background-position: -222px -106px; }
+.SpPublicActivities { background-position: -222px -101px; }
 .SpModeratorActivities { background-position: -293px -54px; }
 .SpAdminActivities { background-position: -268px -53px; }
 .SpUnansweredQuestions { background-position: -102px -278px; } 
@@ -161,5 +162,6 @@
 .SpWarn,
 .SpWarnings { background-position: -100px -52px; }
 .SpBan { background-position: -317px -29px; }
+.SpIgnoreList,
 .SpDelete { background-position: -341px -5px; }
 .SpWhosOnline { background-position: -293px -29px; }
